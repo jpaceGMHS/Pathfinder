@@ -1,5 +1,6 @@
 import pygame as py
 import Grid
+import Path
 
 # Constants
 SCREENWIDTH = 500
@@ -14,10 +15,25 @@ clock = py.time.Clock()
 screen = py.display.set_mode(SCREENSIZE)
 
 # Set up game
+isRunning = False
 
 Map = Grid.Grid(Screen = screen, Dimension = 10)
 
 
+
+def OnMouseClick():
+    mouse_loc = py.mouse.get_pos()
+    #print(mouse_loc)
+    cell = Map.Get_Cell_byScreenLocation(mouse_loc)
+    cell.Swap_Wall()
+    
+def OnKeyPress(key):
+    #print(py.key.name(key))
+    if key == py.K_SPACE:
+        Dijkstra = Path.Dijkstra(Map)
+        Dijkstra.Solve()
+        print("Done")
+    
 py.init()
 
 # Main Game Loop
@@ -27,6 +43,11 @@ while app_running:
     for event in py.event.get():
         if event.type == py.QUIT:
             app_running = False
+        if event.type == py.MOUSEBUTTONUP:
+            if not isRunning:
+                OnMouseClick()
+        if event.type == py.KEYDOWN:
+            OnKeyPress(event.key)
 
     #Draw
     screen.fill(SCREENCOLOR)
